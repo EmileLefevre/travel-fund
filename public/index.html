@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://bootswatch.com/5/lux/bootstrap.min.css">
+    <title>Accueil</title>
+</head>
+
+<body>
+    <!-- Conteneur pour la barre de navigation -->
+    <div id="navbar"></div>
+
+    <script>
+        // Charger la barre de navigation et gérer la logique après l'injection
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(data => {
+                // Injecter la navbar dans le DOM
+                document.getElementById('navbar').innerHTML = data;
+
+                // Charger la logique de gestion de la navbar
+                const authLink = document.querySelector('#auth-link');
+                if (authLink) {
+                    const userName = localStorage.getItem('userName');
+                    if (userName) {
+                        // L'utilisateur est connecté
+                        authLink.textContent = `Se déconnecter (${userName})`;
+                        authLink.href = '#';
+                        authLink.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            // Déconnexion : nettoyer le stockage local et recharger la page
+                            localStorage.removeItem('userName');
+                            localStorage.removeItem('sessionId');
+                            window.location.reload();
+                        });
+                    } else {
+                        // L'utilisateur n'est pas connecté
+                        authLink.textContent = 'Se connecter';
+                        authLink.href = 'connection.html';
+                    }
+                }
+            })
+            .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
+    </script>
+
+    <p>Accueil</p>
+</body>
+
+</html>

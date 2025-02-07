@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://bootswatch.com/5/lux/bootstrap.min.css">
+    <title>S'inscrire</title>
+</head>
+
+<body>
+    <!-- Conteneur pour la barre de navigation -->
+    <div id="navbar"></div>
+
+    <div>
+        <br>
+        <form id="registrationForm">
+            <div>
+                <label for="name">Nom :</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="username">Prénom :</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="mail">Adresse mail :</label>
+                <input type="email" id="mail" name="mail" required>
+            </div>
+            <div>
+                <label for="addresse">Adresse postale :</label>
+                <input type="text" id="addresse" name="addresse" required>
+            </div>
+            <div>
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div>
+                <label for="confirmPassword">Confirmer le mot de passe :</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit">S'inscrire</button>
+        </form>
+    </div>
+
+    <!-- Inclusion du fichier JS -->
+    <script src="registration.js"></script>
+</body>
+
+</html>

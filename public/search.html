@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://bootswatch.com/5/lux/bootstrap.min.css">
+    <title>Rechercher ce que vous voulez</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="navbar"></div>
+
+    <br>
+    <h1>Rechercher ce que vous voulez</h1>
+    <div id="map"></div>
+
+    <form id="searchForm">
+        <div class="form-group">
+            <label for="nom">Que recherchez vous ?</label>
+            <select id="nom" name="nom" required>
+                <option value="">Déroulez le menu</option>
+                <option value="nom1">Restaurant</option>
+                <option value="nom2">Hotel</option>
+                <option value="nom3">Parc</option>
+                <option value="nom4">Bar</option>
+            </select>
+        </div>
+        
+        <button type="submit">Valider le Rendez-vous</button>
+    </form>
+
+    <script src="search.js"></script>
+</body>
+
+</html>
