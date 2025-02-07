@@ -1,4 +1,3 @@
-// Fonction pour charger la navbar depuis navbar.html
 function loadNavbar() {
     fetch('navbar.html')
         .then(response => response.text())
@@ -28,7 +27,7 @@ function updateNavbar() {
         }
     }
 }
-// Fonction pour charger et initialiser Google Maps
+
 function loadGoogleMapsAPI() {
     fetch('/api/google-maps-key')
         .then(response => response.json())
@@ -44,22 +43,42 @@ function loadGoogleMapsAPI() {
         });
 }
 
-// Fonction d'initialisation de la carte Google Maps
-let map, marker, geocoder, autocomplete;
+let map, marker, geocoder, autocomplete, placesService;
+let markersArray = []; // Pour stocker les marqueurs et les supprimer après
 
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 48.8566, lng: 2.3522 }, // Paris par défaut
+        center: { lat: 48.8566, lng: 2.3522 },
         zoom: 12,
     });
-
     geocoder = new google.maps.Geocoder();
-
     marker = new google.maps.Marker({
         position: { lat: 48.8566, lng: 2.3522 },
         map: map,
         title: "Cliquez pour déplacer",
+        draggable: true
     });
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                map.setCenter(userLocation);
+                map.setZoom(15);
+
+                marker.setPosition(userLocation);
+            },
+            () => {
+                alert("Géolocalisation refusée. Emplacement par défaut utilisé.");
+            }
+        );
+    } else {
+        alert("Votre navigateur ne supporte pas la géolocalisation.");
+    }
 
     google.maps.event.addListener(marker, 'position_changed', function () {
         geocodePosition(marker.position);
@@ -87,8 +106,6 @@ function initMap() {
         geocodePosition(position);
     });
 }
-
-// Fonction pour géocoder une position
 function geocodePosition(position) {
     geocoder.geocode({ location: position }, (results, status) => {
         if (status === "OK" && results[0]) {
@@ -99,11 +116,9 @@ function geocodePosition(position) {
     });
 }
 
-// Fonction principale pour initialiser la page
 function init() {
     loadNavbar();
     loadGoogleMapsAPI();
 }
 
-// Appel de la fonction d'initialisation
 init();

@@ -20,15 +20,20 @@
         <div class="form-group">
             <label for="nom">Que recherchez vous ?</label>
             <select id="nom" name="nom" required>
-                <option value="">Déroulez le menu</option>
-                <option value="nom1">Restaurant</option>
-                <option value="nom2">Hotel</option>
-                <option value="nom3">Parc</option>
-                <option value="nom4">Bar</option>
+                <option value="Default">Déroulez le menu</option>
+                <option value="restaurant">Restaurant</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Parc">Parc</option>
+                <option value="Bar">Bar</option>
+            </select>
+            <select id="rayon">
+                <option value="10000">10 km</option>
+                <option value="20000">20 km</option>
+                <option value="30000">30 km</option>
             </select>
         </div>
         
-        <button type="submit">Valider le Rendez-vous</button>
+        <button type="submit">Valider la recherche</button>
     </form>
 
     <script src="search.js"></script>
