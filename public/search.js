@@ -1,3 +1,8 @@
+const slider = document.getElementById("rayon");
+const sliderValue = document.getElementById("rayonValue");
+let map, marker, geocoder, placesService, circle;
+let markersArray = [];
+
 function loadNavbar() {
     fetch('navbar.html')
         .then(response => response.text())
@@ -43,9 +48,22 @@ function loadGoogleMapsAPI() {
         });
 }
 
+function updateCircle(position, radius) {
+    if (circle) {
+        circle.setMap(null);
+    }
 
-let map, marker, geocoder, placesService;
-let markersArray = [];
+    circle = new google.maps.Circle({
+        center: position,
+        radius: radius,
+        map: map,
+        fillColor: "#3498db",
+        fillOpacity: 0.1,
+        strokeColor: "#2980b9",
+        strokeOpacity: 0.8,
+        strokeWeight: 2
+    });
+}
 
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
@@ -62,6 +80,22 @@ function initMap() {
         title: "Votre position",
         draggable: true
     });
+    
+    updateCircle(marker.getPosition(), slider.value * 1000);
+
+    slider.addEventListener("input", function () {
+        sliderValue.textContent = slider.value;
+        updateCircle(marker.getPosition(), slider.value * 1000);
+    });
+
+    marker.addListener("dragend", function () { //maj du cercle selon le marker
+        updateCircle(marker.getPosition(), slider.value * 1000);
+    });
+
+    google.maps.event.addListener(map, "click", (event) => {
+        marker.setPosition(event.latLng); // Mettre le marqueur au clic
+        updateCircle(event.latLng, slider.value * 1000);
+    });
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -71,9 +105,10 @@ function initMap() {
                     lng: position.coords.longitude
                 };
 
-                map.setCenter(userLocation);
-                map.setZoom(14);
+                map.setCenter(userLocation); //update les fonctionnalités après la loc
+                map.setZoom(11);
                 marker.setPosition(userLocation);
+                updateCircle(userLocation, slider.value * 1000);
             },
             () => alert("Géolocalisation refusée. Veuillez déplacer le marqueur.")
         );
@@ -81,14 +116,11 @@ function initMap() {
         alert("Votre navigateur ne supporte pas la géolocalisation. Veuillez déplacer le marqueur.");
     }
 
-    google.maps.event.addListener(map, "click", (event) => {
-        marker.setPosition(event.latLng); // Mettre le marqueur au clic
-    });
-
     document.getElementById("searchForm").addEventListener("submit", (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         const categorie = document.getElementById("categorie").value;
-        const rayon = parseInt(document.getElementById("rayon").value, 10);
+        let rayon = parseInt(document.getElementById("rayon").value, 10);
+        rayon *= 1000;
         const position = marker.getPosition();
 
         if (categorie === "Default") {
@@ -100,7 +132,8 @@ function initMap() {
             "Restaurant": "restaurant",
             "Hotel": "lodging", // nom des lieux avec google places
             "Parc": "park",
-            "Bar": "bar"
+            "Bar": "bar",
+            "Parking": "parking"
         };
 
         searchPlaces(position, categoriesMap[categorie], rayon);
@@ -117,6 +150,7 @@ function searchPlaces(position, type, radius) {
     };
 
     placesService.nearbySearch(request, (results, status) => {
+        console.log("Status de la requête : ", status);
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             results.forEach(place => {
                 const placeMarker = new google.maps.Marker({
