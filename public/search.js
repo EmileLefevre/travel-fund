@@ -93,8 +93,13 @@ function initMap() {
     });
 
     google.maps.event.addListener(map, "click", (event) => {
-        marker.setPosition(event.latLng); // Mettre le marqueur au clic
-        updateCircle(event.latLng, slider.value * 1000);
+        const markerConfirm = window.confirm("Êtes-vous sûr de vouloir déplacer le marqueur ici ?");
+        if (markerConfirm) {
+            marker.setPosition(event.latLng);
+            updateCircle(event.latLng, slider.value * 1000);
+        } else {
+            console.log("Déplacement du marqueur annulé.");
+        }
     });
 
     if (navigator.geolocation) {
