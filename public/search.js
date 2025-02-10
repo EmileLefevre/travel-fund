@@ -1,7 +1,10 @@
 const slider = document.getElementById("rayon");
 const sliderValue = document.getElementById("rayonValue");
+let directionsService, directionsRenderer;
 let map, marker, geocoder, placesService, circle;
 let markersArray = [];
+let infoWindow
+let userLocation = null;
 
 function loadNavbar() {
     fetch('navbar.html')
@@ -70,50 +73,40 @@ function initMap() {
         center: { lat: 48.8566, lng: 2.3522 }, // Par defaut la carte se met sur paris si il ne touve pas ma loc
         zoom: 12,
     });
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
 
     geocoder = new google.maps.Geocoder();
     placesService = new google.maps.places.PlacesService(map);
 
     marker = new google.maps.Marker({
-        position: { lat: 48.8566, lng: 2.3522 },
+        position: { lat: 48.8566, lng: 2.3522 }, 
         map: map,
         title: "Votre position",
         draggable: true
     });
-    
-    updateCircle(marker.getPosition(), slider.value * 1000);
 
-    slider.addEventListener("input", function () {
-        sliderValue.textContent = slider.value;
-        updateCircle(marker.getPosition(), slider.value * 1000);
-    });
+    // Mise à jour de userLocation à chaque changement de position du marqueur
+    userLocation = marker.getPosition();
 
-    marker.addListener("dragend", function () { //maj du cercle selon le marker
-        updateCircle(marker.getPosition(), slider.value * 1000);
-    });
-
-    google.maps.event.addListener(map, "click", (event) => {
-        const markerConfirm = window.confirm("Êtes-vous sûr de vouloir déplacer le marqueur ici ?");
-        if (markerConfirm) {
-            marker.setPosition(event.latLng);
-            updateCircle(event.latLng, slider.value * 1000);
-        } else {
-            console.log("Déplacement du marqueur annulé.");
-        }
+    marker.addListener("dragend", function () { 
+        userLocation = marker.getPosition(); // MAJ de userLocation
+        updateCircle(userLocation, slider.value * 1000); // MAJ du cercle
     });
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                const userLocation = {
-                    lat: position.coords.latitude, //trouve ma loc 
+                userLocation = {
+                    lat: position.coords.latitude, //trouve ma loc
                     lng: position.coords.longitude
                 };
 
-                map.setCenter(userLocation); //update les fonctionnalités après la loc
+                map.setCenter(userLocation); // Centrer la carte
                 map.setZoom(11);
-                marker.setPosition(userLocation);
-                updateCircle(userLocation, slider.value * 1000);
+                marker.setPosition(userLocation); // MAJ position du marqueur
+                updateCircle(userLocation, slider.value * 1000); // MAJ du cercle
             },
             () => alert("Géolocalisation refusée. Veuillez déplacer le marqueur.")
         );
@@ -155,7 +148,6 @@ function searchPlaces(position, type, radius) {
     };
 
     placesService.nearbySearch(request, (results, status) => {
-        console.log("Status de la requête : ", status);
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             results.forEach(place => {
                 const placeMarker = new google.maps.Marker({
@@ -173,24 +165,82 @@ function searchPlaces(position, type, radius) {
                     photoUrl = "https://via.placeholder.com/200?text=Aucune+image"; // image par défaut
                 }
 
-                const infoWindow = new google.maps.InfoWindow({ // avoir toutes les onfos au click 
+                infoWindow = new google.maps.InfoWindow({ //afficher les infos au click
                     content: `
                         <div>
                             <strong>${place.name}</strong><br>
                             ${place.vicinity}<br> 
                             <img src="${photoUrl}" alt="Photo de ${place.name}" style="width: 100%; max-width: 200px; border-radius: 8px; margin-top: 5px;">
+                            <br>
+                            ${place.website
+                                ? `<a href="${place.website}" target="_blank">Visiter le site</a>`
+                                : `<a href="https://www.google.com/maps/place/?q=place_id:${place.place_id}" target="_blank">Voir sur Google Maps</a>`}
+                            <br><br>
+                            <label for="transportMode">Mode de transport :</label>
+                            <select id="transportMode">
+                                <option value="DRIVING">🚗 Voiture</option>
+                                <option value="WALKING">🚶‍♂️ Marche</option>
+                                <option value="BICYCLING">🚴 Vélo</option>
+                                <option value="TRANSIT">🚌 Transport en commun</option>
+                            </select>
+                            <br><br>
+                            <button onclick="calculateRoute('${place.geometry.location.lat()}', '${place.geometry.location.lng()}')">Itinéraire</button>
                         </div>
                     `
                 });
 
                 placeMarker.addListener("click", () => {
-                    infoWindow.open(map, placeMarker); // afficher les infos au click
+                    selectedDestination = place.geometry.location;
+                    infoWindow.open(map, placeMarker);
                 });
             });
         } else {
             alert("Aucun résultat trouvé.");
         }
     });
+}
+
+function calculateRoute(destLat, destLng) {
+    const mode = document.getElementById('transportMode').value; // Récupère le mode de transport
+
+    const transportModes = {
+        "DRIVING": "En Voiture",
+        "WALKING": "À Pied",
+        "BICYCLING": "En Vélo",
+        "TRANSIT": "En Transport en commun"
+    };
+
+    if (!userLocation) {
+        alert("Position utilisateur inconnue.");
+        return;
+    }
+
+    if (!selectedDestination) {
+        selectedDestination = new google.maps.LatLng(destLat, destLng); // Crée un Lat/Lng si non défini
+    }
+
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
+    // Calcul de l'itinéraire
+    directionsService.route({
+        origin: userLocation,
+        destination: selectedDestination,
+        travelMode: google.maps.TravelMode[mode],
+    }, (response, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+            directionsRenderer.setDirections(response);
+            const duration = response.routes[0].legs[0].duration.text;
+            document.getElementById("durationDisplay").innerHTML = transportModes[mode] + ":" + "<br>" + `Temps: ${duration}` + "<br>" + "Distance: " + response.routes[0].legs[0].distance.text;
+        } else {
+            alert("Impossible de calculer l'itinéraire.");
+        }
+    });
+
+    if (infoWindow) {
+        infoWindow.close();
+    }
 }
 
 
