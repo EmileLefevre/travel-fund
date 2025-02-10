@@ -19,16 +19,24 @@
     <form id="searchForm">
         <div class="form-group">
             <label for="nom">Que recherchez vous ?</label>
-            <select id="nom" name="nom" required>
-                <option value="">Déroulez le menu</option>
-                <option value="nom1">Restaurant</option>
-                <option value="nom2">Hotel</option>
-                <option value="nom3">Parc</option>
-                <option value="nom4">Bar</option>
+            <select id="categorie" name="categorie" required>
+                <option value="Default">Déroulez le menu</option>
+                <option value="Restaurant">Restaurant</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Parc">Parc</option>
+                <option value="Bar">Bar</option>
+                <option value="Parking">Parking</option>
+
             </select>
+            <div class="form-group">
+                <label for="rayon">Rayon de recherche :</label>
+                <input type="range" id="rayon" min="5" max="100" step="5" value="5" style="width: 150px; margin: 0 10px;">
+                <span id="rayonValue">5</span> km
+            </div>
+            
         </div>
         
-        <button type="submit">Valider le Rendez-vous</button>
+        <button type="submit">Valider la recherche</button>
     </form>
 
     <script src="search.js"></script>

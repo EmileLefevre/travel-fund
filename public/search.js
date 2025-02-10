@@ -1,4 +1,8 @@
-// Fonction pour charger la navbar depuis navbar.html
+const slider = document.getElementById("rayon");
+const sliderValue = document.getElementById("rayonValue");
+let map, marker, geocoder, placesService, circle;
+let markersArray = [];
+
 function loadNavbar() {
     fetch('navbar.html')
         .then(response => response.text())
@@ -28,7 +32,7 @@ function updateNavbar() {
         }
     }
 }
-// Fonction pour charger et initialiser Google Maps
+
 function loadGoogleMapsAPI() {
     fetch('/api/google-maps-key')
         .then(response => response.json())
@@ -44,51 +48,158 @@ function loadGoogleMapsAPI() {
         });
 }
 
-// Fonction d'initialisation de la carte Google Maps
-let map, marker, geocoder, autocomplete;
+function updateCircle(position, radius) {
+    if (circle) {
+        circle.setMap(null);
+    }
+
+    circle = new google.maps.Circle({
+        center: position,
+        radius: radius,
+        map: map,
+        fillColor: "#3498db",
+        fillOpacity: 0.1,
+        strokeColor: "#2980b9",
+        strokeOpacity: 0.8,
+        strokeWeight: 2
+    });
+}
 
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 48.8566, lng: 2.3522 }, // Paris par défaut
+        center: { lat: 48.8566, lng: 2.3522 }, // Par defaut la carte se met sur paris si il ne touve pas ma loc
         zoom: 12,
     });
 
     geocoder = new google.maps.Geocoder();
+    placesService = new google.maps.places.PlacesService(map);
 
     marker = new google.maps.Marker({
         position: { lat: 48.8566, lng: 2.3522 },
         map: map,
-        title: "Cliquez pour déplacer",
+        title: "Votre position",
+        draggable: true
+    });
+    
+    updateCircle(marker.getPosition(), slider.value * 1000);
+
+    slider.addEventListener("input", function () {
+        sliderValue.textContent = slider.value;
+        updateCircle(marker.getPosition(), slider.value * 1000);
     });
 
-    google.maps.event.addListener(marker, 'position_changed', function () {
-        geocodePosition(marker.position);
-    });
-
-    const input = document.getElementById("adresse");
-    autocomplete = new google.maps.places.Autocomplete(input);
-    autocomplete.bindTo("bounds", map);
-
-    autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        if (!place.geometry) {
-            alert("Aucun détail disponible pour l'adresse saisie.");
-            return;
-        }
-
-        map.setCenter(place.geometry.location);
-        map.setZoom(15);
-        marker.setPosition(place.geometry.location);
+    marker.addListener("dragend", function () { //maj du cercle selon le marker
+        updateCircle(marker.getPosition(), slider.value * 1000);
     });
 
     google.maps.event.addListener(map, "click", (event) => {
-        const position = event.latLng;
-        marker.setPosition(position);
-        geocodePosition(position);
+        const markerConfirm = window.confirm("Êtes-vous sûr de vouloir déplacer le marqueur ici ?");
+        if (markerConfirm) {
+            marker.setPosition(event.latLng);
+            updateCircle(event.latLng, slider.value * 1000);
+        } else {
+            console.log("Déplacement du marqueur annulé.");
+        }
+    });
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLocation = {
+                    lat: position.coords.latitude, //trouve ma loc 
+                    lng: position.coords.longitude
+                };
+
+                map.setCenter(userLocation); //update les fonctionnalités après la loc
+                map.setZoom(11);
+                marker.setPosition(userLocation);
+                updateCircle(userLocation, slider.value * 1000);
+            },
+            () => alert("Géolocalisation refusée. Veuillez déplacer le marqueur.")
+        );
+    } else {
+        alert("Votre navigateur ne supporte pas la géolocalisation. Veuillez déplacer le marqueur.");
+    }
+
+    document.getElementById("searchForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const categorie = document.getElementById("categorie").value;
+        let rayon = parseInt(document.getElementById("rayon").value, 10);
+        rayon *= 1000;
+        const position = marker.getPosition();
+
+        if (categorie === "Default") {
+            alert("Veuillez sélectionner une catégorie.");
+            return;
+        }
+
+        const categoriesMap = {
+            "Restaurant": "restaurant",
+            "Hotel": "lodging", // nom des lieux avec google places
+            "Parc": "park",
+            "Bar": "bar",
+            "Parking": "parking"
+        };
+
+        searchPlaces(position, categoriesMap[categorie], rayon);
     });
 }
 
-// Fonction pour géocoder une position
+function searchPlaces(position, type, radius) {
+    clearMarkers();
+
+    const request = {
+        location: position,
+        radius: radius,
+        type: type
+    };
+
+    placesService.nearbySearch(request, (results, status) => {
+        console.log("Status de la requête : ", status);
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+            results.forEach(place => {
+                const placeMarker = new google.maps.Marker({
+                    position: place.geometry.location,
+                    map: map,
+                    title: place.name
+                });
+
+                markersArray.push(placeMarker);
+
+                let photoUrl = "";
+                if (place.photos && place.photos.length > 0) {
+                    photoUrl = place.photos[0].getUrl({ maxWidth: 200, maxHeight: 200 });
+                } else {
+                    photoUrl = "https://via.placeholder.com/200?text=Aucune+image"; // image par défaut
+                }
+
+                const infoWindow = new google.maps.InfoWindow({ // avoir toutes les onfos au click 
+                    content: `
+                        <div>
+                            <strong>${place.name}</strong><br>
+                            ${place.vicinity}<br> 
+                            <img src="${photoUrl}" alt="Photo de ${place.name}" style="width: 100%; max-width: 200px; border-radius: 8px; margin-top: 5px;">
+                        </div>
+                    `
+                });
+
+                placeMarker.addListener("click", () => {
+                    infoWindow.open(map, placeMarker); // afficher les infos au click
+                });
+            });
+        } else {
+            alert("Aucun résultat trouvé.");
+        }
+    });
+}
+
+
+function clearMarkers() {
+    markersArray.forEach(marker => marker.setMap(null));
+    markersArray = [];
+}
+
+
 function geocodePosition(position) {
     geocoder.geocode({ location: position }, (results, status) => {
         if (status === "OK" && results[0]) {
@@ -99,11 +210,9 @@ function geocodePosition(position) {
     });
 }
 
-// Fonction principale pour initialiser la page
 function init() {
     loadNavbar();
     loadGoogleMapsAPI();
 }
 
-// Appel de la fonction d'initialisation
 init();
