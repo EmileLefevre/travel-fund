@@ -26,19 +26,17 @@
                 <option value="Parc">Parc</option>
                 <option value="Bar">Bar</option>
                 <option value="Parking">Parking</option>
-
             </select>
             <div class="form-group">
                 <label for="rayon">Rayon de recherche :</label>
                 <input type="range" id="rayon" min="5" max="100" step="5" value="5" style="width: 150px; margin: 0 10px;">
                 <span id="rayonValue">5</span> km
             </div>
-            
+            <p id="durationDisplay" style="font-weight: bold; margin-top: 10px;"></p>
         </div>
-        
         <button type="submit">Valider la recherche</button>
+        <span id="user-info" data-user-id="<%= user.id %>"></span>
     </form>
-
     <script src="search.js"></script>
 </body>
 
