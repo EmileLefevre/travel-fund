@@ -3,9 +3,12 @@ const content = document.createElement("div");
 document.body.appendChild(content);
 
 if (!userName) {
-    content.innerHTML = `
-        <h2>Veuillez vous connecter pour voir vos favoris</h2>
-        <a href="connection.html" class="btn btn-primary">Se connecter</a>`;
+    content.innerHTML = `<br>
+        <h2 class="text-center">Veuillez vous connecter pour voir vos favoris</h2>
+        <br>
+        <div class="text-center">
+            <a href="connection.html" class="btn btn-primary">Se connecter</a>
+        </div>`;
 } else {
     content.innerHTML = `<h2>Bienvenue ${userName}! Voici vos favoris :</h2><ul id="favoritesList"></ul>`;
 

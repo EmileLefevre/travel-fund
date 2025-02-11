@@ -9,23 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const userName = localStorage.getItem('userName');
         if (userName) {
             authLink.textContent = `Se déconnecter (${userName})`;
-            authLink.href = '#'; // Pas de redirection ici, juste un lien ancré pour le click
+            authLink.href = '#';
 
             authLink.addEventListener('click', (e) => {
-                e.preventDefault(); // Empêcher le comportement par défaut (navigation)
+                e.preventDefault();
                 console.log("Clique sur le lien de déconnexion");
-
-                // Demander confirmation avant de déconnecter
                 const confirmDeconnexion = window.confirm('Êtes-vous sûr de vouloir vous déconnecter ?');
                 console.log("Confirmation déconnexion:", confirmDeconnexion);
 
                 if (confirmDeconnexion) {
                     console.log("Déconnexion confirmée");
-                    // Si l'utilisateur confirme, on déconnecte
                     localStorage.removeItem('userName');
                     localStorage.removeItem('sessionId');
                     alert('Déconnexion effectuée');
-                    window.location.reload(); // Recharger la page pour mettre à jour l'interface
+                    window.location.reload();
                 } else {
                     console.log("Déconnexion annulée");
                 }
@@ -35,8 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             authLink.href = 'connection.html';
         }
     }
-
-    // Vérifier si la navbar est chargée
     const navbarCheckInterval = setInterval(() => {
         const authLink = document.getElementById('auth-link');
         if (authLink) {

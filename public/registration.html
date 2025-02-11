@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://bootswatch.com/5/lux/bootstrap.min.css">
     <title>S'inscrire</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <!-- Conteneur pour la barre de navigation -->
     <div id="navbar"></div>
-
     <div>
         <br>
         <form id="registrationForm">
@@ -39,11 +39,23 @@
                 <label for="confirmPassword">Confirmer le mot de passe :</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" required>
             </div>
+            <div class="terms-container">
+                <label>
+                    J'accepte les <a href="#" id="termsLink">conditions générales d'utilisation</a>
+                </label>
+                <input type="checkbox" id="terms" name="terms" required>
+            </div>
+            <div id="termsModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div id="termsContent">
+                        
+                    </div>
+                </div>
+            </div>
             <button type="submit">S'inscrire</button>
         </form>
     </div>
-
-    <!-- Inclusion du fichier JS -->
     <script src="registration.js"></script>
 </body>
 

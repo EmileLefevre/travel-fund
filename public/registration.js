@@ -1,4 +1,3 @@
-// Fonction pour charger la navbar depuis navbar.html
 function loadNavbar() {
     fetch('navbar.html')
         .then(response => response.text())
@@ -8,11 +7,43 @@ function loadNavbar() {
         .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
 }
 
-// Fonction pour gérer la soumission du formulaire
-document.getElementById("registrationForm").addEventListener("submit", async function(event) {
-    event.preventDefault(); // Empêche l'envoi classique du formulaire
+var modal = document.getElementById("termsModal");
+var btn = document.getElementById("termsLink");
+var span = document.getElementsByClassName("close")[0];
+var termsContent = document.getElementById("termsContent");
 
-    // Récupérer les valeurs du formulaire
+btn.onclick = function(event) {
+    event.preventDefault(); 
+    
+    fetch("condition.html")
+        .then(response => response.text())
+        .then(data => {
+            termsContent.innerHTML = data;
+            modal.style.display = "flex";
+        })
+        .catch(error => {
+            console.error("Erreur lors du chargement des conditions :", error);
+        });
+}
+
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+document.getElementById("registrationForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); 
+
+    const termsCheckbox = document.getElementById("terms");
+    if (!termsCheckbox.checked) {
+        alert("Vous devez accepter les conditions générales d'utilisation pour vous inscrire.");
+        return;
+    }
     const formData = new FormData(event.target);
     const data = {
         name: formData.get("name"),
@@ -23,13 +54,11 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
         confirmPassword: formData.get("confirmPassword")
     };
 
-    // Vérifier si les mots de passe sont identiques
     if (data.password !== data.confirmPassword) {
         return alert("Les mots de passe ne correspondent pas.");
     }
 
     try {
-        // Envoyer les données au serveur via fetch (POST)
         const response = await fetch('/register', {
             method: 'POST',
             headers: {
@@ -57,10 +86,8 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
     }
 });
 
-// Fonction principale pour initialiser la page
 function init() {
     loadNavbar();
 }
 
-// Appel de la fonction d'initialisation
 init();
