@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             authLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log("Clique sur le lien de déconnexion");
                 const confirmDeconnexion = window.confirm('Êtes-vous sûr de vouloir vous déconnecter ?');
                 console.log("Confirmation déconnexion:", confirmDeconnexion);
 

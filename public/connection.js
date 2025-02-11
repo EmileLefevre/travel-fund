@@ -18,8 +18,6 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
         if (response.ok) {
             localStorage.setItem('sessionId', data.sessionId);
             localStorage.setItem('userName', data.name);
-            
-
             // Rediriger vers la page d'accueil après une connexion réussie
             window.location.href = 'index.html?status=logged_in';
         } else {

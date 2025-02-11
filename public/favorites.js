@@ -30,14 +30,14 @@ if (!userName) {
                 data.forEach(fav => {
                     const li = document.createElement("li");
                     if (fav.mode == "DRIVING")
-                        fav.mode = "En voiture";
+                        fav.mode = "en voiture";
                     else if (fav.mode == "WALKING")
-                        fav.mode = "À pied";
+                        fav.mode = "à pied";
                     else if (fav.mode == "BICYCLING")
-                        fav.mode = "À vélo";
+                        fav.mode = "à vélo";
                     else if (fav.mode == "TRANSIT")
-                        fav.mode = "En transport en commun";
-                    li.textContent = `${fav.mode} - ${fav.duration} - ${fav.distance}`;
+                        fav.mode = "en transport en commun";
+                    li.textContent = `Pour aller de "${fav.start}" à "${fav.arrive}" ${fav.mode}, vous aurez besoin de ${fav.duration} pour effectuer les ${fav.distance}`;
                     favoritesList.appendChild(li);
                 });
             }

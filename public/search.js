@@ -70,13 +70,16 @@ function updateCircle(position, radius) {
     });
 }
 
-function addFavorite(mode, duration, distance) {
+function addFavorite(mode, duration, distance, start, arrive) {
     const favoriteData = {
         user_id: userName,
         mode: mode,
         duration: duration,
-        distance: distance
+        distance: distance,
+        start: start,
+        arrive: arrive
     };
+    console.log(favoriteData);
     fetch('/addFavorite', {
         method: 'POST',
         headers: {
@@ -278,34 +281,51 @@ function calculateRoute(destLat, destLng) {
     const directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(map);
 
-    // Calcul de l'itinéraire
-    directionsService.route({
-        origin: userLocation,
-        destination: selectedDestination,
-        travelMode: google.maps.TravelMode[mode],
-    }, (response, status) => {
-        if (status === google.maps.DirectionsStatus.OK) {
-            directionsRenderer.setDirections(response);
-            const duration = response.routes[0].legs[0].duration.text;
-            const distance = response.routes[0].legs[0].distance.text;
-            document.getElementById("durationDisplay").innerHTML = transportModes[mode] + ":" + "<br>" + `Temps: ${duration}` + "<br>" + "Distance: " + distance;
-            document.getElementById("durationDisplay").innerHTML += `<br> Ajouter ce trajet aux favoris
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'location': userLocation }, function (results, status) {
+        if (status === 'OK' && results[0]) {
+            const userAddress = results[0].formatted_address;
+            // Calcul de l'itinéraire
+            directionsService.route({
+                origin: userLocation,
+                destination: selectedDestination,
+                travelMode: google.maps.TravelMode[mode],
+            }, (response, status) => {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(response);
+                    const duration = response.routes[0].legs[0].duration.text;
+                    const distance = response.routes[0].legs[0].distance.text;
+                    const start = userAddress;
+                    geocoder.geocode({ 'location': selectedDestination }, function (results, status) {
+                        if (status === 'OK' && results[0]) {
+                            const arrive = results[0].formatted_address;
+                            console.log("arrive : ", arrive);
+                            document.getElementById("durationDisplay").innerHTML = transportModes[mode] + ":" + "<br>" + `Temps: ${duration}` + "<br>" + "Distance: " + distance;
+                            document.getElementById("durationDisplay").innerHTML += `<br> Ajouter ce trajet aux favoris
                                                                     <span id="favoriteStar" class="favorite-star">&#9734;</span>`;
-            if (userName) {
-                document.getElementById("favoriteStar").addEventListener("click", function () {
-                    this.classList.toggle("filled");
-                    if (this.classList.contains("filled")) {
-                        document.getElementById("durationDisplay").innerHTML += "<br> Trajet ajouté aux favoris";
-                        addFavorite(mode, duration, distance);
-                    } else {
-                        document.getElementById("durationDisplay").innerHTML += "<br> Trajet retiré des favoris";
-                    }
-                });
-            } else {
-                alert("Vous devez être connecté pour ajouter aux favoris.");
-            }
+                            if (userName) {
+                                document.getElementById("favoriteStar").addEventListener("click", function () {
+                                    this.classList.toggle("filled");
+                                    if (this.classList.contains("filled")) {
+                                        document.getElementById("durationDisplay").innerHTML += "<br> Trajet ajouté aux favoris";
+                                        addFavorite(mode, duration, distance, start, arrive);
+                                    } else {
+                                        document.getElementById("durationDisplay").innerHTML += "<br> Trajet retiré des favoris";
+                                    }
+                                });
+                            } else {
+                                alert("Vous devez être connecté pour ajouter aux favoris.");
+                            }
+                        } else {
+                            alert("Impossible de récupérer l'adresse de la destination.");
+                        }
+                    });
+                } else {
+                    alert("Impossible de calculer l'itinéraire.");
+                }
+            });
         } else {
-            alert("Impossible de calculer l'itinéraire.");
+            console.log("Impossible de récupérer l'adresse utilisateur.");
         }
     });
 

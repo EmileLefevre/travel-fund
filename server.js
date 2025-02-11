@@ -21,6 +21,7 @@ const db = mysql.createConnection({
     password: "root",
     database: "travel_found",
     port: 8889,
+    charset: 'utf8mb4' //pour que la bdd accepte les caractère speciaux
 });
 app.use(cors());
 app.use(express.json());
@@ -50,13 +51,12 @@ db.connect((err) => {
 });
 
 app.post('/addFavorite', (req, res) => {
-    const { user_id, mode, duration, distance } = req.body;
-
+    const { user_id, mode, duration, distance, start, arrive} = req.body;
     if (!user_id || !mode || !duration || !distance) {
         return res.status(400).json({ error: "Données manquantes" });
     }
-    const sql = "INSERT INTO favoris (user_id, mode, duration, distance) VALUES (?, ?, ?, ?)";
-    db.query(sql, [user_id, mode, duration, distance], (err, result) => {
+    const sql = "INSERT INTO favoris (user_id, mode, duration, distance, start, arrive) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(sql, [user_id, mode, duration, distance, start, arrive], (err, result) => {
         if (err) {
             console.error("Erreur SQL:", err);
             return res.status(500).json({ error: "Erreur serveur" });
@@ -67,20 +67,16 @@ app.post('/addFavorite', (req, res) => {
 
 
 app.get('/favorites', (req, res) => {
-    const userId = req.query.user_id;  // Récupère user_id de la query string
-    console.log("Paramètre user_id reçu :", userId); // Affiche user_id pour debug
-
+    const userId = req.query.user_id; 
     if (!userId) {
         return res.status(400).json({ error: "ID utilisateur requis" });
     }
-
-    // Effectue la requête pour récupérer les favoris de l'utilisateur
-    const sql = 'SELECT mode, duration, distance FROM favoris WHERE user_id = ?';
+    const sql = 'SELECT mode, duration, distance, start, arrive FROM favoris WHERE user_id = ?';
     db.query(sql, [userId], (err, results) => {
         if (err) {
             return res.status(500).json({ error: "Erreur lors de la récupération des favoris" });
         }
-        res.json(results); // Renvoie les favoris en format JSON
+        res.json(results);
     });
 });
 
