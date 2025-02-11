@@ -109,7 +109,14 @@ function initMap() {
         position: { lat: 48.8566, lng: 2.3522 },
         map: map,
         title: "Votre position",
-        draggable: true
+        draggable: true,
+        icon: {
+            url: "https://maps.google.com/mapfiles/ms/icons/bus.png",
+            size: new google.maps.Size(40, 40),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(20, 40)
+        }
+
     });
 
     updateCircle(marker.getPosition(), slider.value * 1000);
@@ -195,7 +202,13 @@ function searchPlaces(position, type, radius) {
                 const placeMarker = new google.maps.Marker({
                     position: place.geometry.location,
                     map: map,
-                    title: place.name
+                    title: place.name,
+                    icon: {
+                        url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png",
+                        size: new google.maps.Size(40, 40),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(20, 40)
+                    }
                 });
 
                 markersArray.push(placeMarker);
@@ -278,7 +291,7 @@ function calculateRoute(destLat, destLng) {
             document.getElementById("durationDisplay").innerHTML = transportModes[mode] + ":" + "<br>" + `Temps: ${duration}` + "<br>" + "Distance: " + distance;
             document.getElementById("durationDisplay").innerHTML += `<br> Ajouter ce trajet aux favoris
                                                                     <span id="favoriteStar" class="favorite-star">&#9734;</span>`;
-            if (userName) { 
+            if (userName) {
                 document.getElementById("favoriteStar").addEventListener("click", function () {
                     this.classList.toggle("filled");
                     if (this.classList.contains("filled")) {
