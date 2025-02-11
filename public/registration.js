@@ -1,13 +1,6 @@
 // Fonction pour charger la navbar depuis navbar.html
-function loadNavbar() {
-    fetch('navbar.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('navbar').innerHTML = data;
-        })
-        .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
-}
-
+import { loadNavbar } from "./module/navbar.js";
+loadNavbar()
 // Fonction pour gérer la soumission du formulaire
 document.getElementById("registrationForm").addEventListener("submit", async function(event) {
     event.preventDefault(); // Empêche l'envoi classique du formulaire
@@ -57,10 +50,3 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
     }
 });
 
-// Fonction principale pour initialiser la page
-function init() {
-    loadNavbar();
-}
-
-// Appel de la fonction d'initialisation
-init();

@@ -1,17 +1,12 @@
+import { loadNavbar } from "./module/navbar.js";
+loadNavbar();
+
 const slider = document.getElementById("rayon");
 const sliderValue = document.getElementById("rayonValue");
 let map, marker, geocoder, placesService, circle;
 let markersArray = [];
 
-function loadNavbar() {
-    fetch('navbar.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('navbar').innerHTML = data;
-            updateNavbar();
-        })
-        .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
-}
+
 
 function updateNavbar() {
     const authLink = document.querySelector('#auth-link');
@@ -209,10 +204,5 @@ function geocodePosition(position) {
         }
     });
 }
+ loadGoogleMapsAPI();
 
-function init() {
-    loadNavbar();
-    loadGoogleMapsAPI();
-}
-
-init();

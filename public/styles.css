@@ -32,3 +32,9 @@ button {
     border: none;
     cursor: pointer;
 }
+.hidden {
+    display: none;
+}
+.show {
+    display: block;
+}
