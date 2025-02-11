@@ -7,15 +7,14 @@ const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const session = require('express-session'); 
 require('dotenv').config();
-
+let userSessions = {};
 const app = express();
 const googleMapsClient = new Client({});
-
 app.use(bodyParser.json());
+const cors = require('cors');
+app.use(cors());
 app.use(cookieParser());
-
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-
 const db = mysql.createConnection({
     host: "127.0.0.1",
     user: "root",
@@ -23,7 +22,8 @@ const db = mysql.createConnection({
     database: "travel_found",
     port: 8889,
 });
-
+app.use(cors());
+app.use(express.json());
 app.use(session({
     secret: 'votre_clé_secrète',
     resave: false,
@@ -40,7 +40,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
 db.connect((err) => {
     if (err) {
         console.error("Erreur de connexion à la base de données :", err);
@@ -50,7 +49,41 @@ db.connect((err) => {
     }
 });
 
-let userSessions = {};
+app.post('/addFavorite', (req, res) => {
+    const { user_id, mode, duration, distance } = req.body;
+
+    if (!user_id || !mode || !duration || !distance) {
+        return res.status(400).json({ error: "Données manquantes" });
+    }
+    const sql = "INSERT INTO favoris (user_id, mode, duration, distance) VALUES (?, ?, ?, ?)";
+    db.query(sql, [user_id, mode, duration, distance], (err, result) => {
+        if (err) {
+            console.error("Erreur SQL:", err);
+            return res.status(500).json({ error: "Erreur serveur" });
+        }
+        res.json({ success: true, message: "Favori ajouté !" });
+    });
+});
+
+
+app.get('/favorites', (req, res) => {
+    const userId = req.query.user_id;  // Récupère user_id de la query string
+    console.log("Paramètre user_id reçu :", userId); // Affiche user_id pour debug
+
+    if (!userId) {
+        return res.status(400).json({ error: "ID utilisateur requis" });
+    }
+
+    // Effectue la requête pour récupérer les favoris de l'utilisateur
+    const sql = 'SELECT mode, duration, distance FROM favoris WHERE user_id = ?';
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: "Erreur lors de la récupération des favoris" });
+        }
+        res.json(results); // Renvoie les favoris en format JSON
+    });
+});
+
 
 app.post("/register", async (req, res) => {
     const { username, name, mail, addresse, password } = req.body;
@@ -87,6 +120,7 @@ app.post("/register", async (req, res) => {
         res.status(500).json({ success: false, message: "Erreur interne." });
     }
 });
+
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
@@ -148,7 +182,6 @@ app.get("/check-login", (req, res) => {
     }
 });
 
-
 app.get('/get-user-name', (req, res) => {
     if (req.session.user) {
         res.json({ name: req.session.user.name });
@@ -194,6 +227,7 @@ app.post('/search', async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la géolocalisation. Veuillez réessayer plus tard.' });
     }
 });
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 

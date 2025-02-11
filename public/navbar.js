@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Page chargée, vérification de la navbar...");
-
     function checkLoginStatus() {
         const authLink = document.getElementById('auth-link');
         if (!authLink) {
@@ -9,8 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const userName = localStorage.getItem('userName');
-        console.log("Nom d'utilisateur:", userName);
-
         if (userName) {
             authLink.textContent = `Se déconnecter (${userName})`;
             authLink.href = '#'; // Pas de redirection ici, juste un lien ancré pour le click

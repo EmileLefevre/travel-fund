@@ -7,7 +7,6 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     const password = formData.get('password');
 
     try {
-        // Envoyer une requête POST au serveur pour se connecter
         const response = await fetch('/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -17,7 +16,6 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
         const data = await response.json();
 
         if (response.ok) {
-            // Sauvegarder le sessionId et le nom de l'utilisateur dans le localStorage
             localStorage.setItem('sessionId', data.sessionId);
             localStorage.setItem('userName', data.name);
             
