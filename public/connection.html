@@ -4,18 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://bootswatch.com/5/lux/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
     <title>Se connecter</title>
 </head>
 <body>
     <div id="navbar"></div>
-    <script>
-        fetch('navbar.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar').innerHTML = data;
-            })
-            .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
-    </script>
+    
     <div class="container mt-5">
         <h2>Se connecter</h2>
         <form id="loginForm">
@@ -32,10 +26,10 @@
         <a href="registration.html">Inscription</a>
     </div>
 
-    <script src="connection.js"></script>
+    <script src="connection.js" type="module" defer></script>
 
     <!-- Inclusion du fichier JS pour la navbar -->
-    <script src="navbar.js"></script>
+    
 
 </body>
 </html>

@@ -1,11 +1,7 @@
-function loadNavbar() {
-    fetch('navbar.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('navbar').innerHTML = data;
-        })
-        .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
-}
+import { loadNavbar } from "./module/navbar.js";
+loadNavbar()
+
+
 
 var modal = document.getElementById("termsModal");
 var btn = document.getElementById("termsLink");
@@ -86,8 +82,4 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
     }
 });
 
-function init() {
-    loadNavbar();
-}
 
-init();

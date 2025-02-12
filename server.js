@@ -18,9 +18,9 @@ const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const db = mysql.createConnection({
     host: "127.0.0.1",
     user: "root",
-    password: "root",
+    password: "",
     database: "travel_found",
-    port: 8889,
+    port: 3306,
     charset: 'utf8mb4' //pour que la bdd accepte les caractère speciaux
 });
 app.use(cors());
@@ -31,6 +31,15 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false }
 }));
+
+
+
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));  // Статическая папка для изображений
+
+
+
+
 
 app.use((req, res, next) => {
     const sessionId = req.cookies.authToken;
@@ -49,6 +58,72 @@ db.connect((err) => {
         console.log("Connecté à la base de données MySQL");
     }
 });
+
+
+
+
+
+
+const multer = require('multer');
+
+// Настройка multer для загрузки изображений
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Уникальное имя для файла
+    },
+});
+const upload = multer({ storage: storage });
+
+// Маршрут для добавления комментария с изображением
+app.post('/submit-comment', upload.single('commentImage'), (req, res) => {
+    console.log(req.body, req.file);
+    const { commentText, author } = req.body;  // Добавляем author
+    const image = req.file ? req.file.filename : null;
+
+    if (!commentText || !author) {  // Проверяем, что автор тоже указан
+        return res.status(400).json({ success: false, message: "Veuillez entrer un commentaire et un auteur." });
+    }
+
+    const query = 'INSERT INTO comments (author, text, image) VALUES (?, ?, ?)';
+    db.query(query, [author, commentText, image], (err, result) => {  // Передаем корректные данные
+        if (err) {
+            console.error('Erreur lors de l\'ajout du commentaire:', err);
+            return res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout du commentaire.' });
+        }
+
+        res.json({ success: true, message: 'Commentaire ajouté avec succès !' });
+    });
+});
+
+// Маршрут для получения комментариев
+app.get('/get-comments', (req, res) => {
+    const query = 'SELECT * FROM comments ORDER BY created_at DESC';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Erreur lors du chargement des commentaires:', err);
+            return res.status(500).json({ error: 'Erreur lors de la récupération des commentaires' });
+        }
+
+        const comments = results.map(row => ({
+            author: row.author,
+            text: row.text,
+            image: row.image ? `/uploads/${row.image}` : null,
+        }));
+
+        res.json({ comments });
+    });
+});
+
+
+
+
+
+
+
+
 
 app.post('/addFavorite', (req, res) => {
     const { user_id, mode, duration, distance, start, arrive} = req.body;

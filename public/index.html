@@ -5,39 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://bootswatch.com/5/lux/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
     <title>Accueil</title>
 </head>
 
 <body>
     <div id="navbar"></div>
-    <script>
-        fetch('navbar.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('navbar').innerHTML = data;
-                const authLink = document.querySelector('#auth-link');
-                if (authLink) {
-                    const userName = localStorage.getItem('userName');
-                    if (userName) {
-                        authLink.textContent = `Se déconnecter (${userName})`;
-                        authLink.href = '#';
-                        authLink.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            localStorage.removeItem('userName');
-                            localStorage.removeItem('sessionId');
-                            window.location.reload();
-                        });
-                    } else {
-                        authLink.textContent = 'Se connecter';
-                        authLink.href = 'connection.html';
-                    }
-                }
-            })
-            .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
-    </script>
+   
     <div class="content">
         <p>Accueil</p>
     </div>
+    <script src="index.js" type="module" defer></script>
 </body>
 
 </html>

@@ -1,3 +1,5 @@
+
+
 const slider = document.getElementById("rayon");
 const sliderValue = document.getElementById("rayonValue");
 let directionsService, directionsRenderer;
@@ -7,36 +9,10 @@ let infoWindow
 let userLocation = null;
 const userName = localStorage.getItem('userName');
 
-function loadNavbar() {
-    fetch('navbar.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('navbar').innerHTML = data;
-            updateNavbar();
-        })
-        .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
-}
 
 
-function updateNavbar() {
-    const authLink = document.querySelector('#auth-link');
-    if (authLink) {
-        const userName = localStorage.getItem('userName');
-        if (userName) {
-            authLink.textContent = `Se déconnecter (${userName})`;
-            authLink.href = '#';
-            authLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('userName');
-                localStorage.removeItem('sessionId');
-                window.location.reload();
-            });
-        } else {
-            authLink.textContent = 'Se connecter';
-            authLink.href = 'connection.html';
-        }
-    }
-}
+
+
 
 function loadGoogleMapsAPI() {
     fetch('/api/google-maps-key')
@@ -351,7 +327,7 @@ function geocodePosition(position) {
 }
 
 function init() {
-    loadNavbar();
+    
     loadGoogleMapsAPI();
 }
 

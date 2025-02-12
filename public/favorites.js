@@ -1,3 +1,6 @@
+import { loadNavbar } from "./module/navbar.js";
+loadNavbar()
+
 const userName = localStorage.getItem("userName");
 const content = document.createElement("div");
 document.body.appendChild(content);

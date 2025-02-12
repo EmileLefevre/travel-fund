@@ -96,3 +96,10 @@ body {
     height: 20px;
     cursor: pointer;
 }
+
+.hidden {
+    display: none;
+}
+.show {
+    display: block;
+}
