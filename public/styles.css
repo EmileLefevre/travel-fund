@@ -6,7 +6,6 @@
 
 body {
     font-family: Arial, sans-serif;
-    padding: 20px;
 }
 
 .form-group {
@@ -16,6 +15,16 @@ body {
 label {
     display: block;
     margin-bottom: 5px;
+}
+
+footer {
+    background: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
 }
 
 input,
