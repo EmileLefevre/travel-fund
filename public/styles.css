@@ -100,7 +100,19 @@ body {
     gap: 10px;
 }
 
+.accept-policy {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .terms-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.accept-policy input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;

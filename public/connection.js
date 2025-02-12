@@ -1,4 +1,6 @@
 import { loadNavbar } from "./module/navbar.js";
+import { loadFooter } from "./module/footer.js";
+loadFooter();
 loadNavbar();
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
     event.preventDefault(); // Empêcher la soumission du formulaire par défaut

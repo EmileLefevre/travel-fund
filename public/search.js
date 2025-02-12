@@ -1,5 +1,3 @@
-
-
 const slider = document.getElementById("rayon");
 const sliderValue = document.getElementById("rayonValue");
 let directionsService, directionsRenderer;
@@ -8,11 +6,6 @@ let markersArray = [];
 let infoWindow
 let userLocation = null;
 const userName = localStorage.getItem('userName');
-
-
-
-
-
 
 function loadGoogleMapsAPI() {
     fetch('/api/google-maps-key')
@@ -327,7 +320,6 @@ function geocodePosition(position) {
 }
 
 function init() {
-    
     loadGoogleMapsAPI();
 }
 
