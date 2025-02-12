@@ -4,16 +4,14 @@ function loadNavbar() {
         .then(response => response.text())
         .then(data => {
             document.getElementById('navbar').innerHTML = data;
-
             const authLink = document.getElementById('auth-link');
-
             const commentSection = document.getElementById('comment-section');
-        
-            // if (!authLink) {
-            //     console.error("Élément 'auth-link' introuvable.");
-            //     return;
-            // }
-        
+
+            if (!authLink) {
+                console.error("Élément 'auth-link' introuvable.");
+                return;
+            }
+
             const userName = localStorage.getItem('userName');
             console.log("Nom d'utilisateur:", userName);
             if (userName) {
@@ -26,12 +24,10 @@ function loadNavbar() {
                     console.log("Clique sur le lien de déconnexion");
                     const confirmDeconnexion = window.confirm('Êtes-vous sûr de vouloir vous déconnecter ?');
                     console.log("Confirmation déconnexion:", confirmDeconnexion);
-    
                     if (confirmDeconnexion) {
                         console.log("Déconnexion confirmée");
                         localStorage.removeItem('userName');
                         localStorage.removeItem('sessionId');
-                        alert('Déconnexion effectuée');
                         window.location.reload();
                     } else {
                         console.log("Déconnexion annulée");
@@ -43,11 +39,11 @@ function loadNavbar() {
                 commentSection.classList.remove("show")
                 commentSection.classList.add("hidden")
             }
-        
-           
+
+
         })
         .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
 }
 
 
-export {loadNavbar}
+export { loadNavbar }

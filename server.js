@@ -18,9 +18,9 @@ const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const db = mysql.createConnection({
     host: "127.0.0.1",
     user: "root",
-    password: "",
+    password: "root",
     database: "travel_found",
-    port: 3306,
+    port: 8889,
     charset: 'utf8mb4' //pour que la bdd accepte les caractère speciaux
 });
 app.use(cors());
@@ -31,16 +31,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false }
 }));
-
-
-
-
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));  // Статическая папка для изображений
-
-
-
-
-
 app.use((req, res, next) => {
     const sessionId = req.cookies.authToken;
 
@@ -58,12 +49,6 @@ db.connect((err) => {
         console.log("Connecté à la base de données MySQL");
     }
 });
-
-
-
-
-
-
 const multer = require('multer');
 
 // Настройка multer для загрузки изображений
@@ -116,14 +101,6 @@ app.get('/get-comments', (req, res) => {
         res.json({ comments });
     });
 });
-
-
-
-
-
-
-
-
 
 app.post('/addFavorite', (req, res) => {
     const { user_id, mode, duration, distance, start, arrive} = req.body;
