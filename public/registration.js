@@ -68,11 +68,9 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
                 password: data.password
             })
         });
-
         const result = await response.json();
-
         if (response.ok) {
-            alert("Inscription réussie !");
+            window.location.href = 'connection.html?status=logged_in';
         } else {
             alert(result.message || "Une erreur est survenue.");
         }
