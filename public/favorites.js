@@ -1,5 +1,7 @@
 import { loadNavbar } from "./module/navbar.js";
-loadNavbar()
+import { loadFooter } from "./module/footer.js";
+loadFooter();
+loadNavbar();
 
 const userName = localStorage.getItem("userName");
 const content = document.createElement("div");

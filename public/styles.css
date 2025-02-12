@@ -23,9 +23,11 @@ footer {
     padding: 20px;
     text-align: center;
     width: 100%;
-    position: absolute;
+    position: fixed;
     bottom: 0;
+    left: 0;
 }
+
 
 input,
 button {
@@ -101,7 +103,19 @@ body {
     gap: 10px;
 }
 
+.accept-policy {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .terms-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.accept-policy input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -139,14 +153,4 @@ body {
 
 .content {
     flex: 1;
-}
-
-footer {
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    background-color: #343a40;
-    color: white;
-    text-align: center;
-    padding: 20px;
 }

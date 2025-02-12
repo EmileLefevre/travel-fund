@@ -1,7 +1,9 @@
 import { loadNavbar } from "./module/navbar.js";
+import { loadFooter } from "./module/footer.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     loadNavbar()
+    loadFooter();
     console.log("Page chargée, vérification des éléments...");
 
     function checkLoginStatus() {

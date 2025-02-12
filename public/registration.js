@@ -1,14 +1,31 @@
 import { loadNavbar } from "./module/navbar.js";
+import { loadFooter } from "./module/footer.js";
+loadFooter();
 loadNavbar()
 var modal = document.getElementById("termsModal");
-var btn = document.getElementById("termsLink");
+var termBtn = document.getElementById("termsLink");
+var policyBtn = document.getElementById("policyLink");
 var span = document.getElementsByClassName("close")[0];
 var termsContent = document.getElementById("termsContent");
 
-btn.onclick = function(event) {
+termBtn.onclick = function(event) {
     event.preventDefault(); 
     
     fetch("condition.html")
+        .then(response => response.text())
+        .then(data => {
+            termsContent.innerHTML = data;
+            modal.style.display = "flex";
+        })
+        .catch(error => {
+            console.error("Erreur lors du chargement des conditions :", error);
+        });
+}
+
+policyBtn.onclick = function(event) {
+    event.preventDefault(); 
+    
+    fetch("policy.html")
         .then(response => response.text())
         .then(data => {
             termsContent.innerHTML = data;
@@ -33,8 +50,13 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
     event.preventDefault(); 
 
     const termsCheckbox = document.getElementById("terms");
+    const policyCheckbox = document.getElementById("policy");
     if (!termsCheckbox.checked) {
         alert("Vous devez accepter les conditions générales d'utilisation pour vous inscrire.");
+        return;
+    }
+    if (!policyCheckbox.checked) {
+        alert("Vous devez accepter la politique de confidentialié pour vous inscrire.");
         return;
     }
     const formData = new FormData(event.target);
