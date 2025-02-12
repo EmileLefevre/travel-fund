@@ -1,7 +1,7 @@
 function loadFooter() {
     const footer = document.createElement("footer");
     footer.innerHTML = `
-        <div style="background:#333; color:#fff; padding: 20px; text-align: center;">
+        <div style="background:#090909; color:#fff; padding: 20px; text-align: center;">
             <p>&copy; 2025 - Travel & Found | 
                 <a href="#" id="footerTermsLink" style="color:#f2f2f2;">Conditions générales d'utilisation</a>
             </p>

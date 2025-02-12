@@ -18,7 +18,7 @@ label {
 }
 
 footer {
-    background: #333;
+    background: #090909;
     color: white;
     padding: 20px;
     text-align: center;
@@ -89,6 +89,7 @@ body {
     top: 10px;
     cursor: pointer;
 }
+
 .close:hover,
 .close:focus {
     color: black;
@@ -109,6 +110,43 @@ body {
 .hidden {
     display: none;
 }
+
 .show {
     display: block;
+}
+
+
+
+
+
+
+/* Чтобы карусельные изображения не были слишком большими */
+.carousel-item img {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    /* Ограничим максимальную высоту */
+    object-fit: cover;
+    /* Обеспечиваем правильное масштабирование изображений */
+}
+
+/* Для футера, чтобы он всегда был внизу */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+}
+
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 20px;
 }

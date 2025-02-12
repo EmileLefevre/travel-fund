@@ -18,9 +18,9 @@ const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const db = mysql.createConnection({
     host: "127.0.0.1",
     user: "root",
-    password: "root",
+    password: "",
     database: "travel_found",
-    port: 8889,
+    port: 3306,
     charset: 'utf8mb4' //pour que la bdd accepte les caractère speciaux
 });
 app.use(cors());
