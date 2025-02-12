@@ -1,8 +1,5 @@
 import { loadNavbar } from "./module/navbar.js";
 loadNavbar()
-
-
-
 var modal = document.getElementById("termsModal");
 var btn = document.getElementById("termsLink");
 var span = document.getElementsByClassName("close")[0];
