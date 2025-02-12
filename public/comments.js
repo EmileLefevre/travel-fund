@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const commentText = document.getElementById('comment-text').value;
             const commentImage = document.getElementById('comment-image').files[0];
 
+
             if (!commentText) {
                 alert("Veuillez entrer un commentaire.");
                 return;
@@ -96,6 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (commentImage) {
                 formData.append("commentImage", commentImage);
             }
+            
+            
 
             fetch("/submit-comment", {
                 method: "POST",
