@@ -68,11 +68,9 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
         password: formData.get("password"),
         confirmPassword: formData.get("confirmPassword")
     };
-
     if (data.password !== data.confirmPassword) {
         return alert("Les mots de passe ne correspondent pas.");
     }
-
     try {
         const response = await fetch('/register', {
             method: 'POST',
@@ -98,5 +96,3 @@ document.getElementById("registrationForm").addEventListener("submit", async fun
         alert("Une erreur est survenue. Veuillez réessayer.");
     }
 });
-
-

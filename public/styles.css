@@ -129,22 +129,13 @@ body {
     display: block;
 }
 
-
-
-
-
-
-/* Чтобы карусельные изображения не были слишком большими */
 .carousel-item img {
     width: 100%;
     height: auto;
     max-height: 500px;
-    /* Ограничим максимальную высоту */
     object-fit: cover;
-    /* Обеспечиваем правильное масштабирование изображений */
 }
 
-/* Для футера, чтобы он всегда был внизу */
 body {
     display: flex;
     flex-direction: column;

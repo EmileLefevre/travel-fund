@@ -1,5 +1,3 @@
-
-
 const slider = document.getElementById("rayon");
 const sliderValue = document.getElementById("rayonValue");
 let directionsService, directionsRenderer;
@@ -8,11 +6,6 @@ let markersArray = [];
 let infoWindow
 let userLocation = null;
 const userName = localStorage.getItem('userName');
-
-
-
-
-
 
 function loadGoogleMapsAPI() {
     fetch('/api/google-maps-key')
@@ -33,7 +26,6 @@ function updateCircle(position, radius) {
     if (circle) {
         circle.setMap(null);
     }
-
     circle = new google.maps.Circle({
         center: position,
         radius: radius,
@@ -80,10 +72,8 @@ function initMap() {
     directionsService = new google.maps.DirectionsService();
     directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(map);
-
     geocoder = new google.maps.Geocoder();
     placesService = new google.maps.places.PlacesService(map);
-
     marker = new google.maps.Marker({
         position: { lat: 48.8566, lng: 2.3522 },
         map: map,
@@ -95,24 +85,18 @@ function initMap() {
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(20, 40)
         }
-
     });
-
     updateCircle(marker.getPosition(), slider.value * 1000);
-
     slider.addEventListener("input", function () {
         sliderValue.textContent = slider.value;
         updateCircle(marker.getPosition(), slider.value * 1000);
     });
-
     // Mise à jour de userLocation à chaque changement de position du marqueur
     userLocation = marker.getPosition();
-
     marker.addListener("dragend", function () {
         userLocation = marker.getPosition(); // MAJ de userLocation
         updateCircle(userLocation, slider.value * 1000); // MAJ du cercle
     });
-
     google.maps.event.addListener(map, "click", (event) => {
         const markerConfirm = window.confirm("Êtes-vous sûr de vouloir déplacer le marqueur ici ?");
         if (markerConfirm) {
@@ -122,7 +106,6 @@ function initMap() {
             console.log("Déplacement du marqueur annulé.");
         }
     });
-
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -130,7 +113,6 @@ function initMap() {
                     lat: position.coords.latitude, //trouve ma loc
                     lng: position.coords.longitude
                 };
-
                 map.setCenter(userLocation); // Centrer la carte
                 map.setZoom(11);
                 marker.setPosition(userLocation); // MAJ position du marqueur
@@ -141,19 +123,16 @@ function initMap() {
     } else {
         alert("Votre navigateur ne supporte pas la géolocalisation. Veuillez déplacer le marqueur.");
     }
-
     document.getElementById("searchForm").addEventListener("submit", (e) => {
         e.preventDefault();
         const categorie = document.getElementById("categorie").value;
         let rayon = parseInt(document.getElementById("rayon").value, 10);
         rayon *= 1000;
         const position = marker.getPosition();
-
         if (categorie === "Default") {
             alert("Veuillez sélectionner une catégorie.");
             return;
         }
-
         const categoriesMap = {
             "Restaurant": "restaurant",
             "Hotel": "lodging", // nom des lieux avec google places
@@ -161,20 +140,17 @@ function initMap() {
             "Bar": "bar",
             "Parking": "parking"
         };
-
         searchPlaces(position, categoriesMap[categorie], rayon);
     });
 }
 
 function searchPlaces(position, type, radius) {
     clearMarkers();
-
     const request = {
         location: position,
         radius: radius,
         type: type
     };
-
     placesService.nearbySearch(request, (results, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             results.forEach(place => {
@@ -189,16 +165,13 @@ function searchPlaces(position, type, radius) {
                         anchor: new google.maps.Point(20, 40)
                     }
                 });
-
                 markersArray.push(placeMarker);
-
                 let photoUrl = "";
                 if (place.photos && place.photos.length > 0) {
                     photoUrl = place.photos[0].getUrl({ maxWidth: 200, maxHeight: 200 });
                 } else {
                     photoUrl = "https://via.placeholder.com/200?text=Aucune+image"; // image par défaut
                 }
-
                 infoWindow = new google.maps.InfoWindow({ //afficher les infos au click
                     content: `
                         <div>
@@ -222,7 +195,6 @@ function searchPlaces(position, type, radius) {
                         </div>
                     `
                 });
-
                 placeMarker.addListener("click", () => {
                     selectedDestination = place.geometry.location;
                     infoWindow.open(map, placeMarker);
@@ -236,27 +208,22 @@ function searchPlaces(position, type, radius) {
 
 function calculateRoute(destLat, destLng) {
     const mode = document.getElementById('transportMode').value; // Récupère le mode de transport
-
     const transportModes = {
         "DRIVING": "En Voiture",
         "WALKING": "À Pied",
         "BICYCLING": "En Vélo",
         "TRANSIT": "En Transport en commun"
     };
-
     if (!userLocation) {
         alert("Position utilisateur inconnue.");
         return;
     }
-
     if (!selectedDestination) {
         selectedDestination = new google.maps.LatLng(destLat, destLng); // Crée un Lat/Lng si non défini
     }
-
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(map);
-
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ 'location': userLocation }, function (results, status) {
         if (status === 'OK' && results[0]) {
@@ -315,7 +282,6 @@ function clearMarkers() {
     markersArray = [];
 }
 
-
 function geocodePosition(position) {
     geocoder.geocode({ location: position }, (results, status) => {
         if (status === "OK" && results[0]) {
@@ -327,8 +293,6 @@ function geocodePosition(position) {
 }
 
 function init() {
-    
     loadGoogleMapsAPI();
 }
-
 init();

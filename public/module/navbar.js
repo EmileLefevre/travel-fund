@@ -11,7 +11,6 @@ function loadNavbar() {
                 console.error("Élément 'auth-link' introuvable.");
                 return;
             }
-
             const userName = localStorage.getItem('userName');
             console.log("Nom d'utilisateur:", userName);
             if (userName) {
@@ -39,11 +38,7 @@ function loadNavbar() {
                 commentSection.classList.remove("show")
                 commentSection.classList.add("hidden")
             }
-
-
         })
         .catch(error => console.error('Erreur lors du chargement de la barre de navigation :', error));
 }
-
-
 export { loadNavbar }

@@ -5,11 +5,8 @@ function loadFooter() {
             <p>&copy; 2025 - Travel & Found | 
                 <a href="#" id="footerTermsLink" style="color:#f2f2f2;">Conditions générales d'utilisation</a>
             </p>
-        </div>
-    `;
-
+        </div>`;
     document.body.appendChild(footer);
-
     // Vérifier si la modale existe déjà, sinon l'ajouter
     if (!document.getElementById("termsModal")) {
         const modal = document.createElement("div");
@@ -22,8 +19,6 @@ function loadFooter() {
             </div>
         `;
         document.body.appendChild(modal);
-
-        // Ajout du CSS de la modale
         const style = document.createElement("style");
         style.innerHTML = `
             .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
@@ -32,12 +27,9 @@ function loadFooter() {
         `;
         document.head.appendChild(style);
     }
-
     // Ajouter l'événement au lien dans le footer
     document.getElementById("footerTermsLink").addEventListener("click", function (event) {
         event.preventDefault();
-
-        // Charger le contenu de condition.html
         fetch("condition.html")
             .then(response => response.text())
             .then(data => {
@@ -49,18 +41,13 @@ function loadFooter() {
                 console.error("Erreur chargement CGU :", error);
             });
     });
-
-    // Fermer la modale en cliquant sur la croix
-    document.querySelector(".close").addEventListener("click", function () {
+    document.querySelector(".close").addEventListener("click", function () { //croix
         document.getElementById("termsModal").style.display = "none";
     });
-
-    // Fermer si on clique en dehors du contenu
-    window.addEventListener("click", function (event) {
+    window.addEventListener("click", function (event) { //en dehors
         if (event.target == document.getElementById("termsModal")) {
             document.getElementById("termsModal").style.display = "none";
         }
     });
 }
-
 export { loadFooter };

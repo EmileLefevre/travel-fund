@@ -5,7 +5,7 @@ const path = require('path');
 const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-const session = require('express-session'); 
+const session = require('express-session');
 require('dotenv').config();
 let userSessions = {};
 const app = express();
@@ -14,17 +14,17 @@ app.use(bodyParser.json());
 const cors = require('cors');
 app.use(cors());
 app.use(cookieParser());
-// const helmet = require('helmet'); //protège xss 
+const helmet = require('helmet'); //protège xss 
 // app.use(helmet());
-// const { body, validationResult } = require('express-validator'); //protège xss
-/* const csurf = require('csurf');
+const { body, validationResult } = require('express-validator'); //protège xss
+const csurf = require('csurf');
 const csrfProtection = csurf({ cookie: true }); //csrf protection
-app.use(csrfProtection); //avec un token csrf */
-// const rateLimit = require('express-rate-limit'); //protège des brute force
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 100 // Limite chaque IP à 100 requêtes
-// });
+//app.use(csrfProtection); //avec un token csrf 
+const rateLimit = require('express-rate-limit'); //protège des brute force
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // Limite chaque IP à 100 requêtes
+});
 // app.use(limiter);
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const HOST = process.env.HOST;
@@ -88,7 +88,6 @@ app.post('/submit-comment', upload.single('commentImage'), (req, res) => {
     if (!commentText || !author) {  // Проверяем, что автор тоже указан
         return res.status(400).json({ success: false, message: "Veuillez entrer un commentaire et un auteur." });
     }
-
     const query = 'INSERT INTO comments (author, text, image) VALUES (?, ?, ?)';
     db.query(query, [author, commentText, image], (err, result) => {  // Передаем корректные данные
         if (err) {
@@ -114,13 +113,12 @@ app.get('/get-comments', (req, res) => {
             text: row.text,
             image: row.image ? `/uploads/${row.image}` : null,
         }));
-
         res.json({ comments });
     });
 });
 
 app.post('/addFavorite', (req, res) => {
-    const { user_id, mode, duration, distance, start, arrive} = req.body;
+    const { user_id, mode, duration, distance, start, arrive } = req.body;
     if (!user_id || !mode || !duration || !distance) {
         return res.status(400).json({ error: "Données manquantes" });
     }
@@ -134,9 +132,8 @@ app.post('/addFavorite', (req, res) => {
     });
 });
 
-
 app.get('/favorites', (req, res) => {
-    const userId = req.query.user_id; 
+    const userId = req.query.user_id;
     if (!userId) {
         return res.status(400).json({ error: "ID utilisateur requis" });
     }
@@ -149,7 +146,6 @@ app.get('/favorites', (req, res) => {
     });
 });
 
-
 app.post("/register", async (req, res) => {
     const { username, name, mail, addresse, password } = req.body;
 
@@ -157,10 +153,9 @@ app.post("/register", async (req, res) => {
         return res.status(400).json({ success: false, message: "Champs manquants." });
     }
     // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
+    // if (!errors.isEmpty()) { //gestion sécurité
     //   return res.status(400).json({ errors: errors.array() });
     // }
-
     try {
         const query = "SELECT * FROM users WHERE username = ?";
         db.query(query, [username], async (err, results) => {
@@ -174,7 +169,6 @@ app.post("/register", async (req, res) => {
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
-
             const insertQuery = "INSERT INTO users (username, name, mail, addresse, password) VALUES (?, ?, ?, ?, ?)";
             db.query(insertQuery, [username, name, mail, addresse, hashedPassword], (err, result) => {
                 if (err) {
@@ -197,7 +191,6 @@ app.post("/login", async (req, res) => {
     if (!username || !password) {
         return res.status(400).json({ success: false, message: "Champs manquants." });
     }
-
     try {
         const query = "SELECT * FROM users WHERE username = ?";
         db.query(query, [username], async (err, results) => {
@@ -216,17 +209,14 @@ app.post("/login", async (req, res) => {
             if (!match) {
                 return res.status(401).json({ success: false, message: "Mot de passe incorrect." });
             }
-
-            const sessionId = 'some_unique_token'; 
+            const sessionId = 'some_unique_token';
             userSessions[sessionId] = { username: user.username, name: user.name };
-
-            res.cookie('authToken', sessionId, { httpOnly: true, secure: false, maxAge: 3600000 }); 
-
+            res.cookie('authToken', sessionId, { httpOnly: true, secure: false, maxAge: 3600000 });
             res.json({
                 success: true,
                 message: "Connexion réussie !",
                 sessionId: sessionId,
-                name: user.name 
+                name: user.name
             });
         });
     } catch (error) {
@@ -235,7 +225,6 @@ app.post("/login", async (req, res) => {
     }
 });
 
-
 app.post("/logout", (req, res) => {
     res.clearCookie('authToken');
 
@@ -243,7 +232,7 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/check-login", (req, res) => {
-    const sessionId = req.cookies.authToken; 
+    const sessionId = req.cookies.authToken;
     if (sessionId && userSessions[sessionId]) {
         res.json({ loggedIn: true, username: userSessions[sessionId].username, name: userSessions[sessionId].name });
     } else {
@@ -272,7 +261,6 @@ app.post('/search', async (req, res) => {
     if (!date || !heure || !adresse) {
         return res.status(400).json({ error: 'Veuillez fournir une date, une heure et une adresse.' });
     }
-
     try {
         const geoResponse = await googleMapsClient.geocode({
             params: {
@@ -280,10 +268,8 @@ app.post('/search', async (req, res) => {
                 key: API_KEY,
             },
         });
-
         const results = geoResponse.data.results;
         const coordinates = results[0].geometry.location;
-
         res.status(201).json({
             message: 'recherche effectué avec succès !',
             date,
@@ -297,11 +283,9 @@ app.post('/search', async (req, res) => {
     }
 });
 
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });
-

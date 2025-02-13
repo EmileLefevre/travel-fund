@@ -16,7 +16,6 @@ if (!userName) {
         </div>`;
 } else {
     content.innerHTML = `<h2>Bienvenue ${userName}! Voici vos favoris :</h2><ul id="favoritesList"></ul>`;
-
     fetch(`http://localhost:3000/favorites?user_id=${encodeURIComponent(userName)}`)
         .then(response => {
             if (!response.ok) throw new Error("Erreur réseau");
