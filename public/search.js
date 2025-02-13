@@ -256,8 +256,6 @@ function calculateRoute(destLat, destLng) {
                                         document.getElementById("durationDisplay").innerHTML += "<br> Trajet retiré des favoris";
                                     }
                                 });
-                            } else {
-                                alert("Vous devez être connecté pour ajouter aux favoris.");
                             }
                         } else {
                             alert("Impossible de récupérer l'adresse de la destination.");
