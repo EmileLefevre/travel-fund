@@ -14,18 +14,18 @@ app.use(bodyParser.json());
 const cors = require('cors');
 app.use(cors());
 app.use(cookieParser());
-const helmet = require('helmet'); //protège xss 
-app.use(helmet());
-const { body, validationResult } = require('express-validator'); //protège xss
+// const helmet = require('helmet'); //protège xss 
+// app.use(helmet());
+// const { body, validationResult } = require('express-validator'); //protège xss
 /* const csurf = require('csurf');
 const csrfProtection = csurf({ cookie: true }); //csrf protection
 app.use(csrfProtection); //avec un token csrf */
-const rateLimit = require('express-rate-limit'); //protège des brute force
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // Limite chaque IP à 100 requêtes
-});
-app.use(limiter);
+// const rateLimit = require('express-rate-limit'); //protège des brute force
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100 // Limite chaque IP à 100 requêtes
+// });
+// app.use(limiter);
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const HOST = process.env.HOST;
 const DB_USER = process.env.USERNAME_DB;
@@ -156,10 +156,10 @@ app.post("/register", async (req, res) => {
     if (!username || !name || !mail || !addresse || !password) {
         return res.status(400).json({ success: false, message: "Champs manquants." });
     }
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   return res.status(400).json({ errors: errors.array() });
+    // }
 
     try {
         const query = "SELECT * FROM users WHERE username = ?";
