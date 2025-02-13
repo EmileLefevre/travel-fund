@@ -19,7 +19,7 @@ Frontend: (If applicable, specify the technologies used)
 sh
 Copy
 Edit
-git clone https://github.com/yourusername/travel-found.git
+git clone https://github.com/EmileLefevre/travel-fund.git
 cd travel-found
 2️⃣ Install Dependencies
 sh
