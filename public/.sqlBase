@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mer. 12 fév. 2025 à 11:31
+-- Généré le : jeu. 13 fév. 2025 à 10:00
 -- Version du serveur : 8.3.0
 -- Version de PHP : 8.2.18
 
@@ -31,8 +31,8 @@ DROP TABLE IF EXISTS `comments`;
 CREATE TABLE IF NOT EXISTS `comments` (
   `id` int NOT NULL AUTO_INCREMENT,
   `author` int NOT NULL,
-  `text` int NOT NULL,
-  `image` int NOT NULL,
+  `text` text NOT NULL,
+  `image` int DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -59,6 +59,8 @@ CREATE TABLE IF NOT EXISTS `favoris` (
 -- Déchargement des données de la table `favoris`
 --
 
+
+
 -- --------------------------------------------------------
 
 --
@@ -79,6 +81,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 -- Déchargement des données de la table `users`
 --
+
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Nom d'utilisateur:", userName);
 
         if (userName) {
-            
+
 
             // Показываем секцию комментариев и форму
             if (commentData && commentForm) {
@@ -45,20 +45,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 commentData.innerHTML = "";
 
                 if (data && data.comments && Array.isArray(data.comments)) {
+                    console.dir(data.comments);
                     data.comments.forEach(comment => {
                         const commentElement = document.createElement("div");
                         commentElement.classList.add("comment", "mb-3");
 
                         const commentContent = `
-                            <p><strong>${comment.author}</strong> a écrit :</p>
-                            <p>${comment.text}</p>
-                            <p><small>${new Date(comment.created_at).toLocaleString()}</small></p>
-                        `;
-
+                            <p> Le <small>${new Date(comment.created_at).toLocaleString()}</small></p><p><strong>${comment.author}</strong> a écrit : ${comment.text}</p><br>`;
                         commentElement.innerHTML = commentContent;
 
                         if (comment.image) {
+  
                             const imageElement = document.createElement("img");
+                            imageElement.src = `/uploads/${comment.image}`;
                             imageElement.src = comment.image;
                             imageElement.alt = "Image du commentaire";
                             imageElement.style.width = "100%";
@@ -85,8 +84,10 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
 
             const commentText = document.getElementById('comment-text').value;
-            const commentImage = document.getElementById('comment-image').files[0];
-
+            // const commentImage = document.getElementById('comment-image').files[0];
+            const userId = localStorage.getItem('userName')
+            const commentImageInput = document.getElementById('comment-image');
+            const commentImage = commentImageInput.files.length > 0 ? commentImageInput.files[0] : null;
 
             if (!commentText) {
                 alert("Veuillez entrer un commentaire.");
@@ -95,35 +96,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const formData = new FormData();
             formData.append("commentText", commentText);
+            // formData.append("image", imageFile);
+
+            formData.append("author", userId);
 
             if (commentImage) {
-                formData.append("commentImage", commentImage);
+                formData.append("image", commentImage);
             }
-            
-            
+            console.log("Отправляемые данные:", { commentText, userId, commentImage });
+
+
 
             fetch("/submit-comment", {
                 method: "POST",
                 body: formData,
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Commentaire ajouté avec succès !");
-                    loadComments();
-                    commentForm.reset();
-                } else {
-                    alert("Erreur lors de l'ajout du commentaire.");
-                }
-            })
-            .catch(error => {
-                console.error("Erreur:", error);
-                alert("Erreur lors de l'envoi du commentaire.");
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Commentaire ajouté avec succès !");
+                        loadComments();
+                        commentForm.reset();
+                    } else {
+                        alert("Erreur lors de l'ajout du commentaire.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur:", error);
+                    alert("Erreur lors de l'envoi du commentaire.");
+                });
         });
     }
 
     checkLoginStatus();
 });
 
-  

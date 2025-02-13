@@ -80,7 +80,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Маршрут для добавления комментария с изображением
-app.post('/submit-comment', upload.single('commentImage'), (req, res) => {
+app.post('/submit-comment', upload.single('image'), (req, res) => {
     console.log(req.body, req.file);
     const { commentText, author } = req.body;  // Добавляем author
     const image = req.file ? req.file.filename : null;
@@ -112,6 +112,7 @@ app.get('/get-comments', (req, res) => {
             author: row.author,
             text: row.text,
             image: row.image ? `/uploads/${row.image}` : null,
+            created_at: row.created_at ? new Date(row.created_at).toISOString() : null
         }));
         res.json({ comments });
     });
